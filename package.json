@@ -1,0 +1,28 @@
+{
+  "name": "api-monitor-service",
+  "version": "0.0.1",
+  "description": "api-monitor-service",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Joshua Peterson",
+  "license": "UNLICENSED",
+  "devDependencies": {
+    "eslint": "^3.0.0",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.10.0",
+    "gulp": "^3.9.1",
+    "gulp-babel": "^6.1.2",
+    "gulp-eslint": "^3.0.0",
+    "gulp-mocha": "^2.2.0",
+    "gulp-sourcemaps": "^1.6.0"
+  },
+  "bin": {
+    "rocket-car": "bin/rocket-car.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/MaterialDev/api-monitor-service.git"
+  }
+}
