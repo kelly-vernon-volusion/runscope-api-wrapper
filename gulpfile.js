@@ -1,5 +1,3 @@
-'use strict';
-
 const gulp = require('gulp');
 const mocha = require('gulp-mocha');
 const sourcemaps = require('gulp-sourcemaps');
@@ -10,7 +8,12 @@ const fs = require('fs');
 gulp.task('default', ['test:unit']);
 
 gulp.task('test:unit', ['build:lint'], () => {
-  return gulp.src('test/**/*.js', {read: false})
+  return gulp.src('test/unit/**/*.js', {read: false})
+    .pipe(mocha());
+});
+
+gulp.task('test:integration', ['build:lint'], () => {
+  return gulp.src('test/integration/**/*.js', {read: false})
     .pipe(mocha());
 });
 
