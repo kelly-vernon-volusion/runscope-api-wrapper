@@ -1,0 +1,11 @@
+{
+  "rules": {
+    "strict": 0,
+    "global-require": 0,
+    "no-unused-expressions":0,
+    "prefer-arrow-callback":0
+  },
+  "env": {
+    "mocha" : true
+  }
+}
