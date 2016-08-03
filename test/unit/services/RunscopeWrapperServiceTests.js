@@ -1,15 +1,15 @@
-let chai = require('chai');
-let expect = require('chai').expect;
-let uuid = require('uuidv4');
-let mockery = require('mockery');
+const expect = require('chai').expect;
+const uuid = require('uuidv4');
+const mockery = require('mockery');
 const sinon = require('sinon');
 require('sinon-as-promised');
 
-describe('RunscopeWrapperService unit tests', ()=> {
+const moduleName = '../../../src/services/RunscopeWrapperService.js';
+
+describe('RunscopeWrapperService unit tests', () => {
   let sandbox;
   let RunscopeWrapperService;
   let token;
-  let moduleName = '../../../src/services/RunscopeWrapperService.js';
   let bucketId;
 
   beforeEach(() => {
@@ -42,7 +42,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
 
     describe('and calling main api', () => {
       it('Should form valid request', () => {
-        let mock = sandbox.stub().resolves();
+        const mock = sandbox.stub().resolves();
         mockery.registerMock('request-promise', mock);
 
         RunscopeWrapperService = require(moduleName);
@@ -53,7 +53,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: 'https://api.runscope.com/',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -61,9 +61,9 @@ describe('RunscopeWrapperService unit tests', ()=> {
       });
     });
 
-    describe('and calling buckets', ()=> {
-      it('Should form valid request', ()=> {
-        let mock = sandbox.stub().resolves();
+    describe('and calling buckets', () => {
+      it('Should form valid request', () => {
+        const mock = sandbox.stub().resolves();
         mockery.registerMock('request-promise', mock);
 
         RunscopeWrapperService = require(moduleName);
@@ -74,7 +74,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: 'https://api.runscope.com/buckets',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -84,9 +84,9 @@ describe('RunscopeWrapperService unit tests', ()=> {
 
     describe('and calling test results', () => {
       it('Should form valid request', () => {
-        let testId = uuid();
-        let mock = sandbox.stub().resolves();
-        let uri = `/buckets/${bucketId}/tests/${testId}`;
+        const testId = uuid();
+        const mock = sandbox.stub().resolves();
+        const uri = `/buckets/${bucketId}/tests/${testId}`;
 
         mockery.registerMock('request-promise', mock);
 
@@ -98,7 +98,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: `https://api.runscope.com${uri}`,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -106,11 +106,11 @@ describe('RunscopeWrapperService unit tests', ()=> {
       });
     });
 
-    describe('and calling latest test results', ()=> {
+    describe('and calling latest test results', () => {
       it('Should form valid request', () => {
-        let testId = uuid();
-        let mock = sandbox.stub().resolves();
-        let uri = `/buckets/${bucketId}/tests/${testId}/results/latest`;
+        const testId = uuid();
+        const mock = sandbox.stub().resolves();
+        const uri = `/buckets/${bucketId}/tests/${testId}/results/latest`;
 
         mockery.registerMock('request-promise', mock);
 
@@ -122,7 +122,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: `https://api.runscope.com${uri}`,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -132,10 +132,10 @@ describe('RunscopeWrapperService unit tests', ()=> {
 
     describe('and calling test result for a test', () => {
       it('Should form valid request', () => {
-        let testId = uuid();
-        let testResultId = uuid();
-        let mock = sandbox.stub().resolves();
-        let uri = `/buckets/${bucketId}/tests/${testId}/results/${testResultId}`;
+        const testId = uuid();
+        const testResultId = uuid();
+        const mock = sandbox.stub().resolves();
+        const uri = `/buckets/${bucketId}/tests/${testId}/results/${testResultId}`;
 
         mockery.registerMock('request-promise', mock);
 
@@ -147,7 +147,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: `https://api.runscope.com${uri}`,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -157,8 +157,8 @@ describe('RunscopeWrapperService unit tests', ()=> {
 
     describe('and getting tests in a bucket', () => {
       it('Should form valid request', () => {
-        let mock = sandbox.stub().resolves();
-        let uri = `/buckets/${bucketId}/tests?count=1000`;
+        const mock = sandbox.stub().resolves();
+        const uri = `/buckets/${bucketId}/tests?count=1000`;
 
         mockery.registerMock('request-promise', mock);
 
@@ -170,7 +170,7 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: `https://api.runscope.com${uri}`,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
@@ -180,9 +180,9 @@ describe('RunscopeWrapperService unit tests', ()=> {
 
     describe('and getting tests results for test in a bucket', () => {
       it('Should form valid request', () => {
-        let test = uuid();
-        let mock = sandbox.stub().resolves();
-        let uri = `/buckets/${bucketId}/tests/${test}/results`;
+        const test = uuid();
+        const mock = sandbox.stub().resolves();
+        const uri = `/buckets/${bucketId}/tests/${test}/results`;
 
         mockery.registerMock('request-promise', mock);
 
@@ -194,12 +194,12 @@ describe('RunscopeWrapperService unit tests', ()=> {
             uri: `https://api.runscope.com${uri}`,
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
+              Authorization: `Bearer ${token}`
             },
             resolveWithFullResponse: true
           })).to.equal(true)
         );
       });
     });
-  })
+  });
 });

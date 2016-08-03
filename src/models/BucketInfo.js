@@ -1,17 +1,15 @@
-'use strict';
-
-class BucketInfo{
-  constructor(name, id, uri){
+class BucketInfo {
+  constructor(name, id, uri) {
     this.name = name;
     this.id = id;
     this.uri = uri;
   }
 
-  isNew(){
+  isNew() {
     return this.id === undefined || this.id === null || this.id === '';
   }
 
-  haveSameId(bucketInfo){
+  haveSameId(bucketInfo) {
     return this.id === bucketInfo.id;
   }
 }

@@ -1,6 +1,4 @@
-'use strict';
-
-let BucketInfo = require('./BucketInfo.js');
+const BucketInfo = require('./BucketInfo.js');
 
 class TestResultCollection {
   constructor() {

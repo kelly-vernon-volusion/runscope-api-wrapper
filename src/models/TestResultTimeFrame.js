@@ -1,16 +1,12 @@
-'use strict';
-
-var SuccessTypes = require('./SuccessTypes.js');
-
 class TestResultTimeFrame {
 
   /**
    *
-   * @param name {string}
-   * @param id {string}
-   * @param previousTestResult {TestResult}
-   * @param currentTestResult {TestResult}
-   * @param uri {string}
+   * @param {string} name
+   * @param {string} id
+   * @param {TestResult} previousTestResult
+   * @param {TestResult} currentTestResult {TestResult}
+   * @param {string} uri
    */
   constructor(name, id, previousTestResult, currentTestResult, uri) {
     this.id = id;

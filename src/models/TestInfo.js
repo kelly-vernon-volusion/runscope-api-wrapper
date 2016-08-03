@@ -1,6 +1,4 @@
-'use strict';
-var SuccessTypes = require('./SuccessTypes.js');
-var TestResult = require('./TestResult.js');
+const TestResult = require('./TestResult.js');
 
 class TestInfo {
   constructor(name, id, schedules, success, uri) {
@@ -21,7 +19,7 @@ class TestInfo {
       return [];
     }
 
-    var ascSort = (a, b) => {
+    const ascSort = (a, b) => {
       return a.runTick < b.runTick;
     };
 
@@ -29,9 +27,9 @@ class TestInfo {
   }
 
   getMostPreviousResult() {
-    var results = this.getResultsByDescTick();
+    const results = this.getResultsByDescTick();
 
-    if (results.length <= 1){
+    if (results.length <= 1) {
       return new TestResult();
     }
 
@@ -39,9 +37,9 @@ class TestInfo {
   }
 
   getLatestResult() {
-    var results = this.getResultsByDescTick();
+    const results = this.getResultsByDescTick();
 
-    if (results.length == 0){
+    if (results.length === 0) {
       return new TestResult();
     }
 

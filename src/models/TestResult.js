@@ -1,6 +1,4 @@
-'use strict';
-
-var SuccessTypes = require('./SuccessTypes.js');
+const SuccessTypes = require('./SuccessTypes.js');
 
 class TestResult {
   constructor() {

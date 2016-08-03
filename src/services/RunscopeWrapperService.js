@@ -1,14 +1,13 @@
-'use strict';
-let rp = require('request-promise');
+const rp = require('request-promise');
 
 class RunscopeWrapperService {
   constructor() {
     this.getHeaders = (token) => {
       return {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      }
-    }
+        Authorization: `Bearer ${token}`
+      };
+    };
   }
 
   getMainInfo(token) {
@@ -17,7 +16,7 @@ class RunscopeWrapperService {
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
     });
-  };
+  }
 
   getBuckets(token) {
     return rp({
@@ -40,7 +39,7 @@ class RunscopeWrapperService {
       uri: `${this.getBucketUri(bucketId)}/tests?count=1000`,
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
-    })
+    });
   }
 
   getTestInformationInBucket(token, bucketId, testId) {
@@ -48,7 +47,7 @@ class RunscopeWrapperService {
       uri: this.getTestInformationInBucketUri(bucketId, testId),
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
-    })
+    });
   }
 
   getTestResultsInBucketPageUri(bucketId, testId) {
@@ -72,7 +71,7 @@ class RunscopeWrapperService {
       uri: this.getTestResultsForTestInBucketUri(bucketId, testId),
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
-    })
+    });
   }
 
   getTestResultByResultId(token, bucketId, testId, testResultId) {
@@ -80,7 +79,7 @@ class RunscopeWrapperService {
       uri: this.getTestResultByIdInBucketUri(bucketId, testId, testResultId),
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
-    })
+    });
   }
 
   /**
@@ -95,7 +94,7 @@ class RunscopeWrapperService {
       uri: this.getTestResultByIdInBucketUri(bucketId, testId, 'latest'),
       headers: this.getHeaders(token),
       resolveWithFullResponse: true
-    })
+    });
   }
 }
 

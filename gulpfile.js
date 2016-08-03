@@ -26,9 +26,3 @@ gulp.task('build:babel', (callback) => {
     .pipe(gulp.dest('build'))
     .on('end', () => callback());
 });
-
-gulp.task('npmrc', () => {
-  const npmKey = process.env.NPM_KEY;
-  fs.writeFileSync('.npmrc', npmKey);
-  console.log(npmKey);
-});
