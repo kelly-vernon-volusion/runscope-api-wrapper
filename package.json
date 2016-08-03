@@ -1,10 +1,10 @@
 {
   "name": "runscope-api-wrapper",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "runscope-api-wrapper",
-  "main": "src/index.js",
+  "main": "build/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "gulp test:unit"
   },
   "author": "Joshua Peterson",
   "license": "UNLICENSED",
@@ -26,15 +26,13 @@
     "sinon-as-promised": "^4.0.2",
     "uuidv4": "^0.3.1"
   },
-  "bin": {
-    "rocket-car": "bin/rocket-car.js"
-  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/MaterialDev/api-monitor-service.git"
+    "url": "https://github.com/MaterialDev/runscope-api-wrapper.git"
   },
   "dependencies": {
     "bluebird": "^3.4.1",
+    "request": "^2.74.0",
     "request-promise": "^4.1.0"
   },
   "engines": {
