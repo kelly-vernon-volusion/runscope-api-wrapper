@@ -9,6 +9,8 @@
   "author": "Joshua Peterson",
   "license": "UNLICENSED",
   "devDependencies": {
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.3.0",
     "eslint": "^3.0.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.10.0",
@@ -16,7 +18,11 @@
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.0",
     "gulp-mocha": "^2.2.0",
-    "gulp-sourcemaps": "^1.6.0"
+    "gulp-sourcemaps": "^1.6.0",
+    "mockery": "^1.7.0",
+    "sinon": "^1.17.5",
+    "sinon-as-promised": "^4.0.2",
+    "uuidv4": "^0.3.1"
   },
   "bin": {
     "rocket-car": "bin/rocket-car.js"
@@ -24,5 +30,9 @@
   "repository": {
     "type": "git",
     "url": "https://github.com/MaterialDev/api-monitor-service.git"
+  },
+  "dependencies": {
+    "bluebird": "^3.4.1",
+    "request-promise": "^4.1.0"
   }
 }
