@@ -73,8 +73,6 @@ describe('ApiServiceMonitor', () => {
 
       return apiMonitor.getAllTestInformationInBucketByTestIds(token, bucketId, [versionTestId])
         .then((testInfoCollection) => {
-          console.log(testInfoCollection);
-
           expect(testInfoCollection.length > 0).to.equal(true);
           expect(testInfoCollection[0] instanceof TestInfo).to.equal(true);
           expect(testInfoCollection[0].id).to.not.be.null;
@@ -94,7 +92,6 @@ describe('ApiServiceMonitor', () => {
 
       return apiMonitor.getAllTestResultsForTestInBucketByTestIds(token, bucketId, [versionTestId])
         .then(testResultsCollectionOfCollections => {
-          console.log(testResultsCollectionOfCollections);
           expect(testResultsCollectionOfCollections).to.not.be.null;
 
           expect(testResultsCollectionOfCollections.length > 0).to.equal(true);
@@ -116,16 +113,13 @@ describe('ApiServiceMonitor', () => {
 
       return apiMonitor.getLatestTestResultInBucket(token, bucketId, versionTestId)
         .then(actualTestResult => {
-          //console.log(actualTestResult);
           expect(actualTestResult).to.not.be.null;
           expect(actualTestResult instanceof TestResult).to.equal(true);
           expect(actualTestResult.testId).to.equal(versionTestId);
           expect(actualTestResult.runTick).to.not.be.null;
           expect(actualTestResult.testResultId).to.not.be.null;
           expect(actualTestResult.success).to.not.be.null;
-        }).catch(function (error) {
-          expect(error).to.be.null;
-        });
+        }).catch(error => expect(error).to.be.null);
     });
   });
 
@@ -136,8 +130,6 @@ describe('ApiServiceMonitor', () => {
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestInformationInBucket(token, bucketId, versionTestId)
         .then(actualTestInfo => {
-          //console.log(actualTestInfo);
-
           expect(actualTestInfo).to.not.be.null;
           expect(actualTestInfo instanceof TestInfo).to.equal(true);
 
@@ -157,8 +149,6 @@ describe('ApiServiceMonitor', () => {
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestResultsForTestInBucket(token, bucketId, versionTestId)
         .then(actualTestResultCollection => {
-          console.log(actualTestResultCollection);
-
           expect(actualTestResultCollection).to.not.be.null;
           expect(actualTestResultCollection instanceof Array).to.equal(true);
           expect(actualTestResultCollection[0] instanceof TestResult).to.equal(true);

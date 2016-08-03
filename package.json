@@ -1,6 +1,6 @@
 {
   "name": "runscope-api-wrapper",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "runscope-api-wrapper",
   "main": "build/index.js",
   "scripts": {
@@ -16,15 +16,18 @@
     "eslint": "^3.0.0",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.10.0",
+    "git-guppy": "^1.2.1",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-eslint": "^3.0.0",
     "gulp-mocha": "^2.2.0",
     "gulp-sourcemaps": "^1.6.0",
     "mockery": "^1.7.0",
+    "run-sequence": "^1.2.2",
     "sinon": "^1.17.5",
     "sinon-as-promised": "^4.0.2",
-    "uuidv4": "^0.3.1"
+    "uuidv4": "^0.3.1",
+    "del": "latest"
   },
   "repository": {
     "type": "git",
