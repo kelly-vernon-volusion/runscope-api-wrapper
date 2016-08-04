@@ -1,12 +1,12 @@
 {
   "name": "runscope-api-wrapper",
-  "version": "0.0.7",
+  "version": "0.0.8",
   "description": "runscope-api-wrapper",
   "main": "build/index.js",
   "scripts": {
     "test": "gulp test:unit"
   },
-  "author": "Joshua Peterson",
+  "author": "Volusion",
   "license": "UNLICENSED",
   "devDependencies": {
     "babel-core": "^6.11.4",

@@ -32,7 +32,7 @@ gulp.task('build:lint', () => {
     .pipe(eslint.format());
 });
 
-gulp.task('build:babel', ['build:lint'], (callback) => {
+gulp.task('build:babel', ['build:lint'], callback => {
   gulp.src(['src/**/*.js'], {base: './src'})
     .pipe(sourcemaps.init())
     .pipe(babel({presets: ['es2015']}))
@@ -47,7 +47,7 @@ gulp.task('npmrc', () => {
   console.log(npmKey);
 });
 
-gulp.task('deploy', (callback) => {
+gulp.task('deploy', callback => {
   runSequence(
     'build:clean',
     'build:babel',
