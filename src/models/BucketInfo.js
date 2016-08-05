@@ -1,8 +1,9 @@
 class BucketInfo {
-  constructor(name, id, uri) {
+  constructor(name, id, uri, defaultEnvironmentId) {
     this.name = name;
     this.id = id;
     this.uri = uri;
+    this.defaultEnvironmentId = defaultEnvironmentId;
   }
 
   isNew() {

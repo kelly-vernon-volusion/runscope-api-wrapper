@@ -5,6 +5,8 @@ const RunscopeWrapperService = require('../../../src/services/RunscopeWrapperSer
 const testId = process.env.testId;
 const token = process.env.token;
 const bucketId = process.env.bucketId;
+const triggerId = process.env.triggerId;
+const triggerUri = process.env.triggerUri;
 
 describe('RunscopeWrapperService integration tests', function () {
   this.timeout(5000);
@@ -77,6 +79,45 @@ describe('RunscopeWrapperService integration tests', function () {
           .then(response => {
             const testsListData = JSON.parse(response.body);
             expect(testsListData.data.length).to.be.greaterThan(0);
+          })
+          .catch(error => expect(error).to.be.null);
+      });
+    });
+
+    describe('and getting shared environments', function () {
+      it('Should Request buckets Api', () => {
+        return service.getSharedEnvironments(token, bucketId)
+          .then(response => {
+            expect(typeof response.body).to.equal('string');
+            const result = JSON.parse(response.body);
+            expect(result.data.length).to.be.greaterThan(0);
+            console.log(result.data);
+          })
+          .catch(error => expect(error).to.be.null);
+      });
+    });
+
+    describe('and triggering a test to run', function () {
+      it('Should Request buckets Api', () => {
+        return service.triggerById(token, triggerId, bucketId)
+          .then(response => {
+            expect(typeof response.body).to.equal('string');
+            const result = JSON.parse(response.body);
+            expect(result.data.runs.length).to.be.greaterThan(0);
+            console.log(result.data.runs);
+          })
+          .catch(error => expect(error).to.be.null);
+      });
+    });
+
+    describe('and triggering a test to by triggerUrl', function () {
+      it('Should Request buckets Api', () => {
+        return service.triggerByUri(token, triggerUri, bucketId)
+          .then(response => {
+            expect(typeof response.body).to.equal('string');
+            const result = JSON.parse(response.body);
+            expect(result.data.runs.length).to.be.greaterThan(0);
+            console.log(result.data.runs);
           })
           .catch(error => expect(error).to.be.null);
       });

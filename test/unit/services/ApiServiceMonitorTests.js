@@ -4,9 +4,8 @@ const mockery = require('mockery');
 const sinon = require('sinon');
 require('sinon-as-promised');
 
+const TestInfo = require('../../../src/models/TestInfo.js');
 const SuccessTypes = require('../../../src/models/SuccessTypes.js');
-const RunscopeWrapperServiceLocation = './RunscopeWrapperService';
-const ApiModuleServiceLocation = '../../../src/services/ApiMonitorService.js';
 
 describe('ApiServiceMonitor', () => {
   let sandbox;
@@ -38,7 +37,7 @@ describe('ApiServiceMonitor', () => {
 
   describe('and getting buckets', () => {
     it('when populated', () => {
-      const bucketInfo = {name: uuid(), key: uuid()};
+      const bucketInfo = {name: uuid(), key: uuid(), default_environment_id: uuid()};
       const uri = '';
 
       const runscopeServiceMock = function RunscopeWrapperService() {
@@ -50,9 +49,9 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getBuckets(token)
@@ -61,43 +60,57 @@ describe('ApiServiceMonitor', () => {
           expect(data[0].isNew()).to.equal(false);
           expect(data[0].name).to.equal(bucketInfo.name);
           expect(data[0].id).to.equal(bucketInfo.key);
+          expect(data[0].defaultEnvironmentId).to.equal(bucketInfo.default_environment_id);
           expect(data[0].uri).to.equal(uri);
         });
     });
   });
 
-  describe('and getting tests\' basic info inside a bucket', () => {
-    it('it should return the data result', () => {
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getBucketTestsLists: sandbox.stub().resolves({
-            body: JSON.stringify({
-              data: [{
-                name: uuid(),
-                id: uuid(),
-                schedules: []
-              }]
-            })
-          }),
-          getTestResultsInBucketPageUri: sandbox.stub().returns()
+  describe('and getting basic test info inside a bucket', () => {
+    describe('and proper runscope trigger uri', () => {
+      it('it should return the data result', () => {
+        const triggerId = uuid();
+
+        const testData = {
+          name: uuid(),
+          test_id: uuid(),
+          schedules: [],
+          default_environment_id: uuid(),
+          trigger_url: `http://api.runscope.com/radar/${triggerId}/trigger`
         };
-      };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+        const uri = 'url';
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
-      const apiMonitor = new ApiMonitorService();
+        const runscopeServiceMock = function RunscopeWrapperService() {
+          return {
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [testData]
+              })
+            }),
+            getTestResultsInBucketPageUri: sandbox.stub().returns(uri)
+          };
+        };
 
-      return apiMonitor.getBucketTestsLists(token, bucketId)
-        .then(testInfoCollection => {
-          expect(testInfoCollection.length > 0).to.equal(true);
+        mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-          expect(testInfoCollection[0].id).to.not.be.null;
-          expect(testInfoCollection[0].name).to.not.be.null;
-          expect(testInfoCollection[0].success).to.not.be.null;
-          expect(testInfoCollection[0].results).to.not.be.null;
-          expect(testInfoCollection[0].uri).to.not.be.null;
-        });
+        const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+        const apiMonitor = new ApiMonitorService();
+
+        return apiMonitor.getBucketTestsLists(token, bucketId)
+          .then(testInfoCollection => {
+            expect(testInfoCollection.length > 0).to.equal(true);
+
+            expect(testInfoCollection[0].id).to.equal(testData.key);
+            expect(testInfoCollection[0].name).to.equal(testData.name);
+            expect(testInfoCollection[0].success).to.equal(SuccessTypes.notRun);
+            expect(testInfoCollection[0].results).to.deep.equal([]);
+            expect(testInfoCollection[0].uri).equal(uri);
+            expect(testInfoCollection[0].defaultEnvironmentId).equal(testData.default_environment_id);
+            expect(testInfoCollection[0].triggerUri).equal(testData.trigger_url);
+            expect(testInfoCollection[0].triggerId).equal(triggerId);
+          });
+      });
     });
   });
 
@@ -117,11 +130,11 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
       const versionTestId = uuid();
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getAllTestInformationInBucketByTestIds(token, bucketId, [versionTestId])
@@ -153,16 +166,15 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       const versionTestId = uuid();
 
       return apiMonitor.getAllTestResultsForTestInBucketByTestIds(token, bucketId, [versionTestId])
         .then((testResultsCollectionOfCollections) => {
-          //console.log(testResultsCollectionOfCollections);
           expect(testResultsCollectionOfCollections).to.not.be.null;
 
           expect(testResultsCollectionOfCollections.length > 0).to.equal(true);
@@ -193,9 +205,9 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       const versionTestId = uuid();
@@ -230,15 +242,13 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getTestInformationInBucket(token, bucketId, versionTestId)
         .then(actualTestInfo => {
-          console.log(actualTestInfo);
-
           expect(actualTestInfo.success).to.equal(SuccessTypes.notRun);
           expect(actualTestInfo.results).to.deep.equal([]);
           expect(actualTestInfo.uri).to.equal('');
@@ -265,15 +275,12 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestResultsForTestInBucket(token, bucketId, versionTestId)
         .then(actualTestResultCollection => {
-          console.log(actualTestResultCollection);
-
-          expect(actualTestResultCollection).to.not.be.null;
           expect(actualTestResultCollection instanceof Array).to.equal(true);
           expect(actualTestResultCollection[0].testId).to.equal(versionTestId);
           expect(actualTestResultCollection[0].runTick).to.equal(dataItem.started_at);
@@ -314,9 +321,9 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getMostRecentResultsOfAllTestsInBucket(token, bucketId)
         .then(actualTestInfoCollection => {
@@ -378,9 +385,9 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getMostRecentResultsOfAllTestsInBucketByName(token, bucketItem.name)
@@ -448,9 +455,9 @@ describe('ApiServiceMonitor', () => {
         };
       };
 
-      mockery.registerMock(RunscopeWrapperServiceLocation, runscopeServiceMock);
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require(ApiModuleServiceLocation);
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getTimeFrameOfTestsInBucketByName(token, bucketItem.name)
@@ -464,8 +471,6 @@ describe('ApiServiceMonitor', () => {
           expect(actualTestResultCollection.testData instanceof Array).to.equal(true);
           expect(actualTestResultCollection.testData[0].id).to.equal(bucketItem.key);
           expect(actualTestResultCollection.testData[0].name).to.equal(info.name);
-
-          console.log(actualTestResultCollection.testData[0].previousTestResult);
           expect(actualTestResultCollection.testData[0].previousTestResult).to.deep.equal({
             testId: -1,
             runTick: -1,
@@ -474,6 +479,94 @@ describe('ApiServiceMonitor', () => {
           });
 
           expect(actualTestResultCollection.testData[0].uri).to.equal('');
+        });
+    });
+  });
+
+  describe('and getting environments', () => {
+    it('should call', () => {
+      const environment = {
+        name: uuid(),
+        id: uuid()
+      };
+
+      const runscopeServiceMock = function RunscopeWrapperService() {
+        return {
+          getSharedEnvironments: sandbox.stub().resolves({
+            body: JSON.stringify({data: [environment]})
+          })
+        };
+      };
+
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
+
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+
+      const apiMonitor = new ApiMonitorService();
+
+      return apiMonitor.getSharedEnvironments(token, bucketId)
+        .then(results => {
+          console.log(results);
+          expect(results[0]).to.deep.equal(environment);
+        });
+    });
+  });
+
+  describe('and trigger by id', () => {
+    it('should call', () => {
+      const runItem = {
+        bucket_key: uuid(),
+        test_id: uuid()
+      };
+
+      const runscopeServiceMock = function RunscopeWrapperService() {
+        return {
+          triggerById: sandbox.stub().resolves({
+            body: JSON.stringify({data: {runs: [runItem]}})
+          })
+        };
+      };
+
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
+
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const apiMonitor = new ApiMonitorService();
+
+      return apiMonitor.triggerById(uuid(), uuid(), uuid())
+        .then(runCollection => {
+          expect(runCollection[0].bucketId).to.equal(runItem.bucket_key);
+          expect(runCollection[0].testId).to.equal(runItem.test_id);
+        });
+    });
+  });
+
+  describe('and trigger by test information', () => {
+    it('should call', () => {
+      const runItem = {
+        bucket_key: uuid(),
+        test_id: uuid()
+      };
+
+      const runscopeServiceMock = function RunscopeWrapperService() {
+        return {
+          triggerByUri: sandbox.stub().resolves({
+            body: JSON.stringify({data: {runs: [runItem]}})
+          })
+        };
+      };
+
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
+
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const apiMonitor = new ApiMonitorService();
+
+      const testInfo = new TestInfo();
+      testInfo.triggerUri = 'blah';
+
+      return apiMonitor.triggerByTestInformation(uuid(), testInfo, uuid())
+        .then(runCollection => {
+          expect(runCollection[0].bucketId).to.equal(runItem.bucket_key);
+          expect(runCollection[0].testId).to.equal(runItem.test_id);
         });
     });
   });

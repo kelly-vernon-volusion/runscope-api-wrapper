@@ -14,25 +14,20 @@ const versionTestId = process.env.versionTestId;
 const token = process.env.token;
 const bucketId = process.env.bucketId;
 const bucketName = process.env.bucketName;
+const triggerId = process.env.triggerId;
+const triggerUri = process.env.triggerUri;
 
-describe('ApiServiceMonitor', () => {
-  describe('when init', function () {
-    this.timeout(2000);
+describe('ApiServiceMonitor', function () {
+  this.timeout(2000);
 
-    it('when null', () => {
-      const apiMonitor = new ApiMonitorService();
+  let apiMonitor;
 
-      return apiMonitor.getBuckets(token)
-        .then(data => expect(data.length).to.equal(0))
-        .catch(data => expect(data).to.not.be.null);
-    });
+  beforeEach(() => {
+    apiMonitor = new ApiMonitorService();
   });
 
   describe('and getting buckets', function () {
-    this.timeout(2000);
-
     it('when populated', () => {
-      const apiMonitor = new ApiMonitorService();
       return apiMonitor.getBuckets(token)
         .then(data => {
           expect(data.length).to.be.greaterThan(0);
@@ -44,12 +39,8 @@ describe('ApiServiceMonitor', () => {
     });
   });
 
-  describe('and getting test\'s basic info inside a bucket', () => {
+  describe('and getting test\'s basic info inside a bucket', function () {
     it('it should return the data result', function () {
-      this.timeout(2000);
-
-      const apiMonitor = new ApiMonitorService();
-
       return apiMonitor.getBucketTestsLists(token, bucketId)
         .then(testInfoCollection => {
           //console.log(testInfoCollection);
@@ -67,10 +58,7 @@ describe('ApiServiceMonitor', () => {
   });
 
   describe('and getting tests information', function () {
-    this.timeout(4000);
     it('it should get it ', () => {
-      const apiMonitor = new ApiMonitorService();
-
       return apiMonitor.getAllTestInformationInBucketByTestIds(token, bucketId, [versionTestId])
         .then((testInfoCollection) => {
           expect(testInfoCollection.length > 0).to.equal(true);
@@ -86,10 +74,7 @@ describe('ApiServiceMonitor', () => {
   });
 
   describe('and getting tests results', function () {
-    this.timeout(4000);
     it('it should get it ', () => {
-      const apiMonitor = new ApiMonitorService();
-
       return apiMonitor.getAllTestResultsForTestInBucketByTestIds(token, bucketId, [versionTestId])
         .then(testResultsCollectionOfCollections => {
           expect(testResultsCollectionOfCollections).to.not.be.null;
@@ -107,10 +92,7 @@ describe('ApiServiceMonitor', () => {
   });
 
   describe('and getting tests\' basic info inside a bucket', function () {
-    this.timeout(4000);
     it('when populated', () => {
-      const apiMonitor = new ApiMonitorService();
-
       return apiMonitor.getLatestTestResultInBucket(token, bucketId, versionTestId)
         .then(actualTestResult => {
           expect(actualTestResult).to.not.be.null;
@@ -119,15 +101,13 @@ describe('ApiServiceMonitor', () => {
           expect(actualTestResult.runTick).to.not.be.null;
           expect(actualTestResult.testResultId).to.not.be.null;
           expect(actualTestResult.success).to.not.be.null;
-        }).catch(error => expect(error).to.be.null);
+        })
+        .catch(error => expect(error).to.be.null);
     });
   });
 
-  describe('and getting all test information inside a bucket', () => {
+  describe('and getting all test information inside a bucket', function () {
     it('when populated', function () {
-      this.timeout(2000);
-
-      const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestInformationInBucket(token, bucketId, versionTestId)
         .then(actualTestInfo => {
           expect(actualTestInfo).to.not.be.null;
@@ -144,9 +124,8 @@ describe('ApiServiceMonitor', () => {
   });
 
   describe('and getting all test results inside a bucket', function () {
-    this.timeout(2000);
+    this.timeout(15000);
     it('when populated', () => {
-      const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestResultsForTestInBucket(token, bucketId, versionTestId)
         .then(actualTestResultCollection => {
           expect(actualTestResultCollection).to.not.be.null;
@@ -161,11 +140,9 @@ describe('ApiServiceMonitor', () => {
     });
   });
 
-  describe('and getting all test results inside a bucket', () => {
+  describe('and getting all test results inside a bucket', function () {
+    this.timeout(15000);
     it('it should get them', function () {
-      this.timeout(40000);
-
-      const apiMonitor = new ApiMonitorService();
       return apiMonitor.getMostRecentResultsOfAllTestsInBucket(token, bucketId)
         .then((actualTestInfoCollection) => {
           expect(actualTestInfoCollection.length > 0).to.equal(true);
@@ -179,12 +156,9 @@ describe('ApiServiceMonitor', () => {
     });
   });
 
-  describe('and getting all test results inside a bucket by name', () => {
+  describe('and getting all test results inside a bucket by name', function () {
+    this.timeout(15000);
     it('when populated', function () {
-      this.timeout(15000);
-
-      const apiMonitor = new ApiMonitorService();
-
       apiMonitor.getMostRecentResultsOfAllTestsInBucketByName(token, bucketName)
         .then(actualTestResultCollection => {
           expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
@@ -205,12 +179,9 @@ describe('ApiServiceMonitor', () => {
     });
   });
 
-  describe('and getting all test results inside a bucket by name', () => {
+  describe('and getting all test results inside a bucket by name', function () {
+    this.timeout(15000);
     it('when populated', function () {
-      this.timeout(15000);
-
-      const apiMonitor = new ApiMonitorService();
-
       return apiMonitor.getTimeFrameOfTestsInBucketByName(token, bucketName)
         .then(actualTestResultCollection => {
           expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
@@ -228,6 +199,40 @@ describe('ApiServiceMonitor', () => {
           expect(actualTestResultCollection.testData[0].uri).not.be.null;
         })
         .catch((error) => expect(error).to.be.null);
+    });
+  });
+
+  describe('and getting shared environments', function () {
+    it('Should Request buckets Api', () => {
+      return apiMonitor.getSharedEnvironments(token, bucketId)
+        .then(response => {
+          expect(response.length).to.be.greaterThan(0);
+          console.log(response);
+        })
+        .catch(error => expect(error).to.be.null);
+    });
+  });
+
+  describe('and triggering a test to run', function () {
+    it('Should call trigger and get data', () => {
+      return apiMonitor.triggerById(token, triggerId, bucketId)
+        .then(response => {
+          expect(response.length).to.be.greaterThan(0);
+          console.log(response);
+        })
+        .catch(error => expect(error).to.be.null);
+    });
+  });
+
+  describe('and triggering a test to by triggerUrl', function () {
+    it('Should call trigger and get data', () => {
+      const testInfo = new TestInfo(null, null, [], null, null, null, triggerUri);
+      return apiMonitor.triggerByTestInformation(token, testInfo, bucketId)
+        .then(response => {
+          expect(response.length).to.be.greaterThan(0);
+          console.log(response);
+        })
+        .catch(error => expect(error).to.be.null);
     });
   });
 });
