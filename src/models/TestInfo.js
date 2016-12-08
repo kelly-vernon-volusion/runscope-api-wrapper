@@ -9,27 +9,37 @@ const getTriggerId = (uri) => {
   }
   return uri.toLowerCase().indexOf(hostAndBasePath) !== -1 && uri.toLowerCase().indexOf(triggerAction) !== -1
     ? uri.toLowerCase().replace(hostAndBasePath, '').replace(triggerAction, '')
-    : -1;
+    : '';
 };
 
-class TestInfo {
-  constructor(name, id, schedules, success, uri, defaultEnvironmentId, triggerUri) {
-    this.name = name;
+module.exports = class TestInfo {
+  /**
+   *
+   * @param {String} [name] name of the test
+   * @param {String} [id] id of the test
+   * @param {String} [schedules] an array of schedules for this tests
+   * @param {String} [success]
+   * @param {String} [uri] the runscope
+   * @param {String} [defaultEnvironmentId]
+   * @param {String} [triggerUri] for telling runscope, 'hey, run this test!'
+   */
+  constructor (name, id, schedules, success, uri, defaultEnvironmentId, triggerUri) {
+    this.name = name || '';
     this.results = [];
-    this.id = id;
-    this.schedules = schedules;
-    this.success = success;
-    this.uri = uri;
-    this.defaultEnvironmentId = defaultEnvironmentId;
-    this.triggerUri = triggerUri;
-    this.triggerId = getTriggerId(triggerUri);
+    this.id = id || '';
+    this.schedules = schedules || [];
+    this.success = success || '';
+    this.uri = uri || '';
+    this.defaultEnvironmentId = defaultEnvironmentId || '';
+    this.triggerUri = triggerUri || '';
+    this.triggerId = getTriggerId(this.triggerUri);
   }
 
-  getHasSchedules() {
+  getHasSchedules () {
     return !(this.schedules === undefined || this.schedules === null || this.schedules.length === 0);
   }
 
-  getResultsByDescTick() {
+  getResultsByDescTick () {
     if (this.results === undefined || this.results === null || this.results.length === 0) {
       return [];
     }
@@ -41,7 +51,7 @@ class TestInfo {
     return this.results.sort(ascSort);
   }
 
-  getMostPreviousResult() {
+  getMostPreviousResult () {
     const results = this.getResultsByDescTick();
 
     if (results.length <= 1) {
@@ -51,7 +61,7 @@ class TestInfo {
     return results[1];
   }
 
-  getLatestResult() {
+  getLatestResult () {
     const results = this.getResultsByDescTick();
 
     if (results.length === 0) {
@@ -61,5 +71,4 @@ class TestInfo {
     return results[0];
   }
 }
-
-module.exports = TestInfo;
+;
