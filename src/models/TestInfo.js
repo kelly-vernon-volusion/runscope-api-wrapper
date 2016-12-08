@@ -1,15 +1,28 @@
 const TestResult = require('./TestResult.js');
 
+/**
+ * purpose is to extract the trigger id from within the triggerUri. It attempts to scrub based on their own path / rest uri. It will check against http and https.
+ * @param {String} uri
+ * @return {String}
+ */
 const getTriggerId = (uri) => {
-  const hostAndBasePath = 'http://api.runscope.com/radar/';
+  const basePath = 'api.runscope.com/radar/';
   const triggerAction = '/trigger';
 
   if (uri === null || uri === undefined) {
-    return -1;
+    return '';
   }
-  return uri.toLowerCase().indexOf(hostAndBasePath) !== -1 && uri.toLowerCase().indexOf(triggerAction) !== -1
-    ? uri.toLowerCase().replace(hostAndBasePath, '').replace(triggerAction, '')
+
+  const schemaAndId = uri.toLowerCase().indexOf(basePath) !== -1 &&
+  uri.toLowerCase().indexOf(triggerAction) !== -1
+    ? uri.toLowerCase().replace(basePath, '').replace(triggerAction, '')
     : '';
+
+  if (schemaAndId === '') {
+    return '';
+  }
+
+  return schemaAndId.replace('https://', '').replace('http://', '');
 };
 
 module.exports = class TestInfo {
