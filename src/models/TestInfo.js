@@ -31,7 +31,7 @@ export class TestInfo {
    *
    * @param {String} [name] name of the test
    * @param {String} [id] id of the test
-   * @param {String} [schedules] an array of schedules for this tests
+   * @param {Array} [schedules] an array of schedules for this tests
    * @param {String} [success]
    * @param {String} [uri] the runscope
    * @param {String} [defaultEnvironmentId]
