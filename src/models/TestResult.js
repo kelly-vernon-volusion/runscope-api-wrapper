@@ -1,6 +1,6 @@
-const SuccessTypes = require('./SuccessTypes.js');
+const SuccessTypes = require('./SuccessTypes.js').SuccessTypes;
 
-class TestResult {
+export class TestResult {
   constructor() {
     this.testId = -1;
     this.runTick = -1;
@@ -8,6 +8,3 @@ class TestResult {
     this.success = SuccessTypes.notRun;
   }
 }
-
-module.exports = TestResult;
-

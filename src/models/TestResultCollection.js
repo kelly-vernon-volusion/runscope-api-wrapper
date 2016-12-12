@@ -1,10 +1,8 @@
-const BucketInfo = require('./BucketInfo.js');
+const BucketInfo = require('./BucketInfo.js').BucketInfo;
 
-class TestResultCollection {
+export class TestResultCollection {
   constructor() {
     this.bucketInfo = new BucketInfo();
     this.testData = [];
   }
 }
-
-module.exports = TestResultCollection;

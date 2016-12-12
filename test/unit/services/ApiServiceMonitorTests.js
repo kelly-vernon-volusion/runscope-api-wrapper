@@ -4,8 +4,8 @@ const mockery = require('mockery');
 const sinon = require('sinon');
 require('sinon-as-promised');
 
-const TestInfo = require('../../../src/models/TestInfo.js');
-const SuccessTypes = require('../../../src/models/SuccessTypes.js');
+const TestInfo = require('../../../src/models/TestInfo.js').TestInfo;
+const SuccessTypes = require('../../../src/models/SuccessTypes.js').SuccessTypes;
 
 describe('ApiServiceMonitor', () => {
   let sandbox;
@@ -20,8 +20,6 @@ describe('ApiServiceMonitor', () => {
       warnOnUnregistered: false,
       useCleanCache: true
     });
-
-    sandbox = sinon.sandbox.create();
 
     token = uuid();
     bucketId = uuid();
@@ -40,18 +38,20 @@ describe('ApiServiceMonitor', () => {
       const bucketInfo = {name: uuid(), key: uuid(), default_environment_id: uuid()};
       const uri = '';
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getBuckets: sandbox.stub().resolves({
-            body: JSON.stringify({data: [bucketInfo]})
-          }),
-          getBucketPageUri: sandbox.stub().returns(uri)
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getBuckets: sandbox.stub().resolves({
+              body: JSON.stringify({data: [bucketInfo]})
+            }),
+            getBucketPageUri: sandbox.stub().returns(uri)
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getBuckets(token)
@@ -81,20 +81,22 @@ describe('ApiServiceMonitor', () => {
 
         const uri = 'url';
 
-        const runscopeServiceMock = function RunscopeWrapperService() {
-          return {
-            getBucketTestsLists: sandbox.stub().resolves({
-              body: JSON.stringify({
-                data: [testData]
-              })
-            }),
-            getTestResultsInBucketPageUri: sandbox.stub().returns(uri)
-          };
+        const runscopeServiceMock = {
+          RunscopeWrapperService: () => {
+            return {
+              getBucketTestsLists: sandbox.stub().resolves({
+                body: JSON.stringify({
+                  data: [testData]
+                })
+              }),
+              getTestResultsInBucketPageUri: sandbox.stub().returns(uri)
+            };
+          }
         };
 
         mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-        const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+        const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
         const apiMonitor = new ApiMonitorService();
 
         return apiMonitor.getBucketTestsLists(token, bucketId)
@@ -121,20 +123,22 @@ describe('ApiServiceMonitor', () => {
         schedules: []
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestInformationInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [testInfo]})
-          }),
-          getTestResultsInBucketPageUri: sandbox.stub().returns('')
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [testInfo]})
+            }),
+            getTestResultsInBucketPageUri: sandbox.stub().returns('')
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
       const versionTestId = uuid();
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getAllTestInformationInBucketByTestIds(token, bucketId, [versionTestId])
@@ -157,18 +161,20 @@ describe('ApiServiceMonitor', () => {
         test_run_id: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestResultsForTestInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [testResult]})
-          }),
-          getBucketPageUri: sandbox.stub().returns('')
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [testResult]})
+            }),
+            getBucketPageUri: sandbox.stub().returns('')
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       const versionTestId = uuid();
@@ -196,18 +202,20 @@ describe('ApiServiceMonitor', () => {
         test_run_id: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getLatestTestResultsInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: dataItem})
-          }),
-          getBucketPageUri: sandbox.stub().returns('')
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getLatestTestResultsInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: dataItem})
+            }),
+            getBucketPageUri: sandbox.stub().returns('')
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       const versionTestId = uuid();
@@ -233,18 +241,20 @@ describe('ApiServiceMonitor', () => {
         schedules: []
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestInformationInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: info})
-          }),
-          getTestResultsInBucketPageUri: sandbox.stub().returns('')
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getTestResultsInBucketPageUri: sandbox.stub().returns('')
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getTestInformationInBucket(token, bucketId, versionTestId)
@@ -266,18 +276,20 @@ describe('ApiServiceMonitor', () => {
         started_at: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestResultsForTestInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [dataItem]})
-          }),
-          getBucketPageUri: sandbox.stub().returns('')
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [dataItem]})
+            }),
+            getBucketPageUri: sandbox.stub().returns('')
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getTestResultsForTestInBucket(token, bucketId, versionTestId)
         .then(actualTestResultCollection => {
@@ -300,32 +312,83 @@ describe('ApiServiceMonitor', () => {
         schedules: []
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestResultsInBucketPageUri: sandbox.stub().returns(''),
-          getBucketTestsLists: sandbox.stub().resolves({
-            body: JSON.stringify({
-              data: [{
-                name: uuid(),
-                id: uuid(),
-                schedules: []
-              }]
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsInBucketPageUri: sandbox.stub().returns(''),
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [{
+                  name: uuid(),
+                  id: uuid(),
+                  schedules: []
+                }]
+              })
+            }),
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [info]})
             })
-          }),
-          getTestInformationInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: info})
-          }),
-          getTestResultsForTestInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [info]})
-          })
-        };
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
       return apiMonitor.getMostRecentResultsOfAllTestsInBucket(token, bucketId)
+        .then(actualTestInfoCollection => {
+          expect(actualTestInfoCollection.length > 0).to.equal(true);
+          expect(actualTestInfoCollection[0].id).to.not.be.null;
+          expect(actualTestInfoCollection[0].name).to.not.be.null;
+          expect(actualTestInfoCollection[0].success).to.not.be.null;
+          expect(actualTestInfoCollection[0].results).to.not.be.null;
+          expect(actualTestInfoCollection[0].uri).to.not.be.null;
+        });
+    });
+  });
+  describe('and getting all test results with prefix inside a bucket', () => {
+    it('it should get them', () => {
+      const testPrefix = uuid();
+      const versionTestId = uuid();
+
+      const info = {
+        name: `${testPrefix} ${uuid()}`,
+        id: versionTestId,
+        schedules: []
+      };
+
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsInBucketPageUri: sandbox.stub().returns(''),
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [{
+                  name: `${testPrefix} ${uuid()}`,
+                  id: uuid(),
+                  schedules: []
+                }]
+              })
+            }),
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [info]})
+            })
+          };
+        }
+      };
+
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
+
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
+      const apiMonitor = new ApiMonitorService();
+      return apiMonitor.getMostRecentResultsOfAllTestsWithPrefixInBucket(token, bucketId, testPrefix)
         .then(actualTestInfoCollection => {
           expect(actualTestInfoCollection.length > 0).to.equal(true);
           expect(actualTestInfoCollection[0].id).to.not.be.null;
@@ -361,37 +424,114 @@ describe('ApiServiceMonitor', () => {
         test_id: info.id
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestResultsInBucketPageUri: sandbox.stub().returns(''),
-          getBuckets: sandbox.stub().resolves({
-            body: JSON.stringify({data: [bucketItem]})
-          }),
-          getBucketTestsLists: sandbox.stub().resolves({
-            body: JSON.stringify({
-              data: [testList]
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsInBucketPageUri: sandbox.stub().returns(''),
+            getBuckets: sandbox.stub().resolves({
+              body: JSON.stringify({data: [bucketItem]})
+            }),
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [testList]
+              })
+            }),
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getBucketPageUri: sandbox.stub().returns(''),
+            getMostRecentResultsOfAllTestsInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [recentTestResults]})
+            }),
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [info]})
             })
-          }),
-          getTestInformationInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: info})
-          }),
-          getBucketPageUri: sandbox.stub().returns(''),
-          getMostRecentResultsOfAllTestsInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [recentTestResults]})
-          }),
-          getTestResultsForTestInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [info]})
-          })
-        };
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getMostRecentResultsOfAllTestsInBucketByName(token, bucketItem.name)
         .then(actualTestResultCollection => {
+          expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketItem.name);
+          expect(actualTestResultCollection.bucketInfo.id).to.equal(bucketItem.key);
+          expect(actualTestResultCollection.bucketInfo.uri).to.equal('');
+
+          expect(actualTestResultCollection.testData.length > 0).to.equal(true);
+
+          expect(actualTestResultCollection.testData[0].id).to.equal(bucketItem.key);
+          expect(actualTestResultCollection.testData[0].name).to.equal(info.name);
+          expect(actualTestResultCollection.testData[0].success).to.equal(SuccessTypes.notRun);
+          expect(actualTestResultCollection.testData[0].results).to.deep.equal([]);
+          expect(actualTestResultCollection.testData[0].uri).to.equal('');
+        });
+    });
+  });
+
+  describe('and getting all test with prefix results inside a bucket by name', () => {
+    it('when populated', () => {
+      const bucketItem = {
+        name: `bucket name ${uuid()}`,
+        key: `key${uuid()}`
+      };
+
+      const testPrefix = uuid();
+
+      const info = {
+        name: `prefix:${testPrefix} test name ${uuid()}`,
+        id: bucketItem.key,
+        schedules: []
+      };
+
+      const testList = {
+        name: info.name,
+        id: info.id,
+        schedules: []
+      };
+
+      const recentTestResults = {
+        id: uuid(),
+        test_id: info.id
+      };
+
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsInBucketPageUri: sandbox.stub().returns(''),
+            getBuckets: sandbox.stub().resolves({
+              body: JSON.stringify({data: [bucketItem]})
+            }),
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [testList]
+              })
+            }),
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getBucketPageUri: sandbox.stub().returns(''),
+            getMostRecentResultsOfAllTestsInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [recentTestResults]})
+            }),
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [info]})
+            })
+          };
+        }
+      };
+
+      mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
+
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
+      const apiMonitor = new ApiMonitorService();
+
+      return apiMonitor.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketItem.name, testPrefix)
+        .then(actualTestResultCollection => {
+          console.log(actualTestResultCollection);
           expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketItem.name);
           expect(actualTestResultCollection.bucketInfo.id).to.equal(bucketItem.key);
           expect(actualTestResultCollection.bucketInfo.uri).to.equal('');
@@ -431,33 +571,35 @@ describe('ApiServiceMonitor', () => {
         test_id: info.id
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getTestResultsInBucketPageUri: sandbox.stub().returns(''),
-          getBuckets: sandbox.stub().resolves({
-            body: JSON.stringify({data: [bucketItem]})
-          }),
-          getBucketTestsLists: sandbox.stub().resolves({
-            body: JSON.stringify({
-              data: [testList]
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getTestResultsInBucketPageUri: sandbox.stub().returns(''),
+            getBuckets: sandbox.stub().resolves({
+              body: JSON.stringify({data: [bucketItem]})
+            }),
+            getBucketTestsLists: sandbox.stub().resolves({
+              body: JSON.stringify({
+                data: [testList]
+              })
+            }),
+            getTestInformationInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: info})
+            }),
+            getBucketPageUri: sandbox.stub().returns(''),
+            getMostRecentResultsOfAllTestsInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [recentTestResults]})
+            }),
+            getTestResultsForTestInBucket: sandbox.stub().resolves({
+              body: JSON.stringify({data: [info]})
             })
-          }),
-          getTestInformationInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: info})
-          }),
-          getBucketPageUri: sandbox.stub().returns(''),
-          getMostRecentResultsOfAllTestsInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [recentTestResults]})
-          }),
-          getTestResultsForTestInBucket: sandbox.stub().resolves({
-            body: JSON.stringify({data: [info]})
-          })
-        };
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.getTimeFrameOfTestsInBucketByName(token, bucketItem.name)
@@ -490,17 +632,19 @@ describe('ApiServiceMonitor', () => {
         id: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          getSharedEnvironments: sandbox.stub().resolves({
-            body: JSON.stringify({data: [environment]})
-          })
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            getSharedEnvironments: sandbox.stub().resolves({
+              body: JSON.stringify({data: [environment]})
+            })
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
 
       const apiMonitor = new ApiMonitorService();
 
@@ -519,17 +663,19 @@ describe('ApiServiceMonitor', () => {
         test_id: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          triggerById: sandbox.stub().resolves({
-            body: JSON.stringify({data: {runs: [runItem]}})
-          })
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            triggerById: sandbox.stub().resolves({
+              body: JSON.stringify({data: {runs: [runItem]}})
+            })
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       return apiMonitor.triggerById(uuid(), uuid(), uuid())
@@ -547,17 +693,19 @@ describe('ApiServiceMonitor', () => {
         test_id: uuid()
       };
 
-      const runscopeServiceMock = function RunscopeWrapperService() {
-        return {
-          triggerByUri: sandbox.stub().resolves({
-            body: JSON.stringify({data: {runs: [runItem]}})
-          })
-        };
+      const runscopeServiceMock = {
+        RunscopeWrapperService: () => {
+          return {
+            triggerByUri: sandbox.stub().resolves({
+              body: JSON.stringify({data: {runs: [runItem]}})
+            })
+          };
+        }
       };
 
       mockery.registerMock('./RunscopeWrapperService', runscopeServiceMock);
 
-      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
+      const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
       const apiMonitor = new ApiMonitorService();
 
       const testInfo = new TestInfo();

@@ -1,14 +1,14 @@
 const Promise = require('bluebird');
 
-const TestInfo = require('./../models/TestInfo.js');
-const TestResult = require('./../models/TestResult.js');
-const BucketInfo = require('./../models/BucketInfo.js');
-const TestResultCollection = require('./../models/TestResultCollection.js');
-const TestResultTimeFrame = require('./../models/TestResultTimeFrame.js');
-const SuccessTypes = require('./../models/SuccessTypes.js');
+const TestInfo = require('./../models/TestInfo.js').TestInfo;
+const TestResult = require('./../models/TestResult.js').TestResult;
+const BucketInfo = require('./../models/BucketInfo.js').BucketInfo;
+const TestResultCollection = require('./../models/TestResultCollection.js').TestResultCollection;
+const TestResultTimeFrame = require('./../models/TestResultTimeFrame.js').TestResultTimeFrame;
+const SuccessTypes = require('./../models/SuccessTypes.js').SuccessTypes;
 const util = require('util');
 
-const RunscopeWrapperService = require('./RunscopeWrapperService');
+const RunscopeWrapperService = require('./RunscopeWrapperService').RunscopeWrapperService;
 
 const service = new RunscopeWrapperService();
 
@@ -62,7 +62,7 @@ const convertToTestInfo = (bucketId, testData) => {
   return testInfo;
 };
 
-const convertToTestResult = (testResultData) => {
+const convertToTestResult = testResultData => {
   const testResult = new TestResult();
   testResult.testId = testResultData.test_id;
   testResult.testResultId = testResultData.test_run_id;
@@ -100,7 +100,7 @@ const convertToTestInfoCollection = (bucketId, testsDataCollection) => {
   return collection;
 };
 
-class ApiMonitorService {
+export class ApiMonitorService {
 
   /**
    *
@@ -126,7 +126,8 @@ class ApiMonitorService {
         }
 
         return Promise.resolve(collection);
-      }).catch(error => {
+      })
+      .catch(error => {
         return Promise.reject(error);
       });
   }
@@ -138,6 +139,17 @@ class ApiMonitorService {
    * @returns {Promise<Array<TestInfo>>}
    */
   getBucketTestsLists(token, bucketId) {
+    return this.getBucketTestsListsWithPrefix(token, bucketId, null);
+  }
+
+  /**
+   *
+   * @param {string} token
+   * @param {string} bucketId
+   * @param {string} [testPrefix]
+   * @returns {Promise<Array<TestInfo>>}
+   */
+  getBucketTestsListsWithPrefix(token, bucketId, testPrefix) {
     if (isStringNullUndefinedOrEmpty(token) ||
       isStringNullUndefinedOrEmpty(bucketId)) {
       return Promise.reject(new Error('token or bucketId is invalid. Please make sure these are populated with strings.'));
@@ -146,7 +158,16 @@ class ApiMonitorService {
     return service.getBucketTestsLists(token, bucketId)
       .then(response => {
         const data = JSON.parse(response.body).data;
-        return Promise.resolve(convertToTestInfoCollection(bucketId, data));
+        const collection = convertToTestInfoCollection(bucketId, data);
+
+        if (isStringNullUndefinedOrEmpty(testPrefix)) {
+          console.log('collection', collection);
+          return Promise.resolve(collection);
+        }
+
+        const filteredData = collection.filter(item => item.name.toLowerCase().indexOf(testPrefix.toLowerCase()) !== -1);
+
+        return Promise.resolve(filteredData);
       })
       .catch(error => Promise.reject(error));
   }
@@ -172,7 +193,8 @@ class ApiMonitorService {
 
         const testInfo = convertToTestInfo(bucketId, data);
         return Promise.resolve(testInfo);
-      }).catch(error => Promise.reject(error));
+      })
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -221,7 +243,8 @@ class ApiMonitorService {
         testResult.success = data.result;
 
         return Promise.resolve(testResult);
-      }).catch(() => {
+      })
+      .catch(() => {
         testResult.success = SuccessTypes.runscopeServerError;
         return Promise.resolve(testResult);
       });
@@ -276,38 +299,51 @@ class ApiMonitorService {
    * @returns {Promise<Array<TestInfo>>}
    */
   getMostRecentResultsOfAllTestsInBucket(token, bucketId) {
+    return this.getMostRecentResultsOfAllTestsWithPrefixInBucket(token, bucketId, null);
+  }
+
+  /**
+   *
+   * @param {string} token
+   * @param {string} bucketId
+   * @param {string} [testPrefix]
+   * @returns {Promise<Array<TestInfo>>}
+   */
+  getMostRecentResultsOfAllTestsWithPrefixInBucket(token, bucketId, testPrefix) {
     if (isStringNullUndefinedOrEmpty(token) ||
       isStringNullUndefinedOrEmpty(bucketId)) {
       return Promise.reject(new Error('token or bucketId is invalid. Please make sure these are populated with strings.'));
     }
 
-    return this.getBucketTestsLists(token, bucketId)
-      .then(testsInBucketCollection => {
-        const dataIdsOnly = [];
+    let testInfoCollection;
+    let dataIdsOnly = [];
 
-        for (let d = 0; d < testsInBucketCollection.length; d++) {
-          dataIdsOnly.push(testsInBucketCollection[d].id);
+    return this.getBucketTestsListsWithPrefix(token, bucketId, testPrefix)
+      .then(testsInBucketCollection => {
+        dataIdsOnly = testsInBucketCollection.map(item => item.id);
+
+        return this.getAllTestInformationInBucketByTestIds(token, bucketId, dataIdsOnly);
+      })
+      .then(testInfoCollectionResult => {
+        testInfoCollection = testInfoCollectionResult;
+
+        return this.getAllTestResultsForTestInBucketByTestIds(token, bucketId, dataIdsOnly);
+      })
+      .then(testDataResultsCollection => {
+        for (let i = 0; i < testInfoCollection.length; i++) {
+          for (let w = 0; w < testDataResultsCollection.length; w++) {
+            const testResultCollectionGroup = testDataResultsCollection[w];
+            for (let ww = 0; ww < testResultCollectionGroup.length; ww++) {
+              if (testInfoCollection[i].id === testResultCollectionGroup[ww].testId) {
+                testInfoCollection[i].results.push(testResultCollectionGroup[ww]);
+              }
+            }
+          }
         }
 
-        return this.getAllTestInformationInBucketByTestIds(token, bucketId, dataIdsOnly)
-          .then(testInfoCollection => {
-            return this.getAllTestResultsForTestInBucketByTestIds(token, bucketId, dataIdsOnly)
-              .then(testDataResultsCollection => {
-                for (let i = 0; i < testInfoCollection.length; i++) {
-                  for (let w = 0; w < testDataResultsCollection.length; w++) {
-                    const testResultCollectionGroup = testDataResultsCollection[w];
-                    for (let ww = 0; ww < testResultCollectionGroup.length; ww++) {
-                      if (testInfoCollection[i].id === testResultCollectionGroup[ww].testId) {
-                        testInfoCollection[i].results.push(testResultCollectionGroup[ww]);
-                      }
-                    }
-                  }
-                }
-
-                return Promise.resolve(testInfoCollection);
-              }).catch(error => Promise.reject(error));
-          }).catch(error => Promise.reject(error));
-      });
+        return Promise.resolve(testInfoCollection);
+      })
+      .catch(error => Promise.reject(error));
   }
 
   /**
@@ -317,6 +353,17 @@ class ApiMonitorService {
    * @returns  {Promise<TestResultCollection>}
    */
   getMostRecentResultsOfAllTestsInBucketByName(token, bucketName) {
+    return this.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, null);
+  }
+
+  /**
+   *
+   * @param {string} token
+   * @param {string} bucketName
+   * @param {string} [testPrefix]
+   * @return {*}
+   */
+  getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, testPrefix) {
     if (isStringNullUndefinedOrEmpty(token) ||
       isStringNullUndefinedOrEmpty(bucketName)) {
       return Promise.reject(new Error('token or bucketName is invalid. Please make sure these are populated with strings.'));
@@ -329,7 +376,7 @@ class ApiMonitorService {
         return Promise.reject(new Error(`cannot find a match for '${bucketName}'`));
       }
 
-      return this.getMostRecentResultsOfAllTestsInBucket(token, bucketInfo.id)
+      return this.getMostRecentResultsOfAllTestsWithPrefixInBucket(token, bucketInfo.id, testPrefix)
         .then(testInfoCollection => {
           const resultForTestCollection = new TestResultCollection();
           resultForTestCollection.bucketInfo = bucketInfo;
@@ -341,7 +388,7 @@ class ApiMonitorService {
           }
 
           return Promise.resolve(resultForTestCollection);
-        }).catch(error => Promise.reject(error));
+        });
     }).catch(error => Promise.reject(error));
   }
 
@@ -446,5 +493,3 @@ class ApiMonitorService {
       .catch(error => Promise.reject(error));
   }
 }
-
-module.exports = ApiMonitorService;

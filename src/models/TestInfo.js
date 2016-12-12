@@ -1,4 +1,4 @@
-const TestResult = require('./TestResult.js');
+const TestResult = require('./TestResult.js').TestResult;
 
 /**
  * purpose is to extract the trigger id from within the triggerUri. It attempts to scrub based on their own path / rest uri. It will check against http and https.
@@ -25,7 +25,7 @@ const getTriggerId = uri => {
 };
 
 
-module.exports = class TestInfo {
+export class TestInfo {
 
   /**
    *
@@ -85,4 +85,3 @@ module.exports = class TestInfo {
     return results[0];
   }
 }
-;

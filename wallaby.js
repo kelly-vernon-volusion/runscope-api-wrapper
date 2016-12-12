@@ -1,13 +1,14 @@
-module.exports = () => ({
+module.exports = (wallaby) => ({
   files: ['src/**/*.js', 'config/*.yaml'],
   tests: ['test/unit/**/*.js'],
   env: {
-    type: 'node',
-    runner: 'node'
+    type: 'node'
   },
   testFramework: 'mocha',
-  setup: function (wallaby) {
-    var mocha = wallaby.testFramework;
-    mocha.timeout(200);
+  compilers: {
+    '**/*.js': wallaby.compilers.babel()
+  },
+  delays: {
+    run: 500
   }
 });

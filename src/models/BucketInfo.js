@@ -1,4 +1,4 @@
-class BucketInfo {
+export class BucketInfo {
   constructor(name, id, uri, defaultEnvironmentId) {
     this.name = name;
     this.id = id;
@@ -15,4 +15,3 @@ class BucketInfo {
   }
 }
 
-module.exports = BucketInfo;

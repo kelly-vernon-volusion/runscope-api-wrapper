@@ -11,7 +11,6 @@ describe('RunscopeWrapperService unit tests', () => {
   let bucketId;
 
   beforeEach(() => {
-    sandbox = sinon.sandbox.create();
     mockery.enable({
       warnOnReplace: false,
       warnOnUnregistered: false,
@@ -43,7 +42,7 @@ describe('RunscopeWrapperService unit tests', () => {
         const mock = sandbox.stub().resolves();
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getMainInfo(token)
@@ -65,7 +64,7 @@ describe('RunscopeWrapperService unit tests', () => {
         const mock = sandbox.stub().resolves();
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getBuckets(token)
@@ -90,7 +89,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getTestInformationInBucket(token, bucketId, testId)
@@ -115,7 +114,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getLatestTestResultsInBucket(token, bucketId, testId)
@@ -141,7 +140,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getTestResultByResultId(token, bucketId, testId, testResultId)
@@ -165,7 +164,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getBucketTestsLists(token, bucketId)
@@ -190,7 +189,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getTestResultsForTestInBucket(token, bucketId, test)
@@ -214,7 +213,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
         mockery.registerMock('request-promise', mock);
 
-        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+        RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
         service = new RunscopeWrapperService();
 
         return service.getSharedEnvironments(token, bucketId)
@@ -241,7 +240,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerById(token, triggerId, environmentId)
@@ -268,7 +267,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerById(token, triggerId, environmentId)
@@ -293,7 +292,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerById(token, triggerId, environmentId)
@@ -324,7 +323,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerByUri(token, triggerUri, environmentId)
@@ -353,7 +352,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerByUri(token, triggerUri, environmentId)
@@ -380,7 +379,7 @@ describe('RunscopeWrapperService unit tests', () => {
 
           mockery.registerMock('request-promise', mock);
 
-          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+          RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
           service = new RunscopeWrapperService();
 
           return service.triggerByUri(token, triggerUri, environmentId)

@@ -1,4 +1,4 @@
-class TestResultTimeFrame {
+export class TestResultTimeFrame {
 
   /**
    *
@@ -16,5 +16,3 @@ class TestResultTimeFrame {
     this.uri = uri;
   }
 }
-
-module.exports = TestResultTimeFrame;

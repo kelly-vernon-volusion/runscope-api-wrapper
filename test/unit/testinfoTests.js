@@ -1,11 +1,12 @@
+'use strict';
+
 const expect = require('chai').expect;
-const TestInfo = require('./../../src/models/TestInfo');
+const TestInfo = require('./../../src/models/TestInfo').TestInfo;
 const uuid = require('uuid');
 
 describe('When using testinfo', () => {
   it('and init with all null', () => {
     const t = new TestInfo(null, null, null, null, null, null, null);
-    console.log(t);
 
     expect(t.name).to.equal('');
     expect(t.id).to.equal('');

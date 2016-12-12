@@ -1,14 +1,16 @@
+
 const rp = require('request-promise');
 const util = require('util');
 
-const getHeaders = (token) => {
+const getHeaders = token => {
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${token}`
   };
 };
 
-class RunscopeWrapperService {
+export class RunscopeWrapperService {
+
   getMainInfo(token) {
     return rp({
       uri: 'https://api.runscope.com/',
@@ -369,6 +371,101 @@ class RunscopeWrapperService {
    * @param {string} bucketId
    * @param {string} testId
    * @returns {Promise<response>}
+   * @example
+   * {
+   *     "data": {
+   *         "agent": null,
+   *         "assertions_defined": 2,
+   *         "assertions_failed": 1,
+   *         "assertions_passed": 1,
+   *         "bucket_key": "6knqwmwvqpzr",
+   *         "finished_at": 1406061608.969942,
+   *         "region": "us1",
+   *         "requests": [
+   *             {
+   *                 "uuid": "570e2a5b-15c0-4b6c-8c30-f807b520396e",
+   *                 "result": "fail",
+   *                 "url": "https://yourapihere.com/",
+   *                 "method": "GET",
+   *                 "assertions_defined": 2,
+   *                 "assertions_failed": 1,
+   *                 "assertions_passed": 1,
+   *                 "scripts_defined": 2,
+   *                 "scripts_failed": 1,
+   *                 "scripts_passed": 1,
+   *                 "variables_defined": 2,
+   *                 "variables_failed": 1,
+   *                 "variables_passed": 1,
+   *                 "assertions": [
+   *                     {
+   *                         "result": "pass",
+   *                         "source": "json",
+   *                         "property": "id",
+   *                         "comparison": "equals_number",
+   *                         "target_value": "123",
+   *                         "actual_value": "123",
+   *                         "error": null
+   *                     },
+   *                     {
+   *                         "result": "fail",
+   *                         "source": "response_time_ms",
+   *                         "property": null,
+   *                         "comparison": "less_than",
+   *                         "target_value": "500",
+   *                         "actual_value": "725",
+   *                         "error": null
+   *                     }
+   *                 ],
+   *                 "scripts": [
+   *                     {
+   *                         "result": "pass",
+   *                         "output": "script output",
+   *                         "error": null
+   *                     },
+   *                     {
+   *                         "result": "fail",
+   *                         "output": "script output",
+   *                         "error": "Variable undefined."
+   *                     }
+   *                 ],
+   *                 "variables": [
+   *                     {
+   *                         "result": "pass",
+   *                         "source": "json",
+   *                         "property": "id",
+   *                         "name": "customer_id",
+   *                         "value": 123,
+   *                         "error": null
+   *                     },
+   *                     {
+   *                         "result": "fail",
+   *                         "source": "json",
+   *                         "property": "name",
+   *                         "name": "name",
+   *                         "value": null,
+   *                         "error": "Attribute not found."
+   *                     }
+   *                 ]
+   *             }
+   *         ],
+   *         "requests_executed": 1,
+   *         "result": "fail",
+   *         "scripts_defined": 2,
+   *         "scripts_failed": 1,
+   *         "scripts_passed": 1,
+   *         "started_at": 1406036406.531371,
+   *         "test_run_id": "0aa48464-f89e-4596-8d60-79bc678d313f",
+   *         "test_id": "db4cc896-2804-4520-ad06-0caf3bf216a8",
+   *         "variables_defined": 2,
+   *         "variables_failed": 1,
+   *         "variables_passed": 1
+   *     },
+   *     "error": null,
+   *     "meta": {
+   *         "status": "success"
+   *     }
+   * }
+   *
    */
   getLatestTestResultsInBucket(token, bucketId, testId) {
     return rp({
@@ -379,4 +476,3 @@ class RunscopeWrapperService {
   }
 }
 
-module.exports = RunscopeWrapperService;
