@@ -161,7 +161,6 @@ export class ApiMonitorService {
         const collection = convertToTestInfoCollection(bucketId, data);
 
         if (isStringNullUndefinedOrEmpty(testPrefix)) {
-          console.log('collection', collection);
           return Promise.resolve(collection);
         }
 
@@ -353,7 +352,7 @@ export class ApiMonitorService {
    * @returns  {Promise<TestResultCollection>}
    */
   getMostRecentResultsOfAllTestsInBucketByName(token, bucketName) {
-    return this.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, null);
+    return this.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, '');
   }
 
   /**
@@ -399,12 +398,25 @@ export class ApiMonitorService {
    * @returns {Promise<TestResultCollection>}
    */
   getTimeFrameOfTestsInBucketByName(token, bucketName) {
+    return this.getTimeFrameOfTestsWithPrefixInBucketByName(token, bucketName, '');
+  }
+
+  /**
+   *
+   * @param {string} token
+   * @param {string} bucketName
+   * @param {string} [testPrefix]
+   * @returns {Promise<TestResultCollection>}
+   */
+  getTimeFrameOfTestsWithPrefixInBucketByName(token, bucketName, testPrefix) {
     if (isStringNullUndefinedOrEmpty(token) ||
       isStringNullUndefinedOrEmpty(bucketName)) {
       return Promise.reject('token or bucketName is invalid. Please make sure these are populated with strings.');
     }
 
-    return this.getMostRecentResultsOfAllTestsInBucketByName(token, bucketName)
+    const validatedTestPrefix = isStringNullUndefinedOrEmpty(testPrefix) ? null : testPrefix;
+
+    return this.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, validatedTestPrefix)
       .then(testResultCollection => {
         const resultForTestCollection = new TestResultCollection();
         resultForTestCollection.bucketInfo = testResultCollection.bucketInfo;

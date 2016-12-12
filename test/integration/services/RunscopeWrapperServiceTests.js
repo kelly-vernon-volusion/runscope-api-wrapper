@@ -1,6 +1,6 @@
 const expect = require('chai').expect;
 
-const RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js');
+const RunscopeWrapperService = require('../../../src/services/RunscopeWrapperService.js').RunscopeWrapperService;
 
 const testId = process.env.testId;
 const token = process.env.token;
@@ -37,7 +37,6 @@ describe('RunscopeWrapperService integration tests', function () {
             expect(typeof response.body).to.equal('string');
             const result = JSON.parse(response.body);
             expect(result.data.length).to.be.greaterThan(0);
-            console.log(result.data);
           })
           .catch(error => expect(error).to.be.null);
       });
@@ -91,7 +90,6 @@ describe('RunscopeWrapperService integration tests', function () {
             expect(typeof response.body).to.equal('string');
             const result = JSON.parse(response.body);
             expect(result.data.length).to.be.greaterThan(0);
-            console.log(result.data);
           })
           .catch(error => expect(error).to.be.null);
       });
@@ -104,7 +102,6 @@ describe('RunscopeWrapperService integration tests', function () {
             expect(typeof response.body).to.equal('string');
             const result = JSON.parse(response.body);
             expect(result.data.runs.length).to.be.greaterThan(0);
-            console.log(result.data.runs);
           })
           .catch(error => expect(error).to.be.null);
       });
@@ -117,9 +114,11 @@ describe('RunscopeWrapperService integration tests', function () {
             expect(typeof response.body).to.equal('string');
             const result = JSON.parse(response.body);
             expect(result.data.runs.length).to.be.greaterThan(0);
-            console.log(result.data.runs);
           })
-          .catch(error => expect(error).to.be.null);
+          .catch(error => {
+            console.log(error);
+            return expect(error).to.be.null;
+          });
       });
     });
   });

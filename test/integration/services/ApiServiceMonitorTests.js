@@ -1,14 +1,16 @@
+'use strict';
+
 const chai = require('chai');
 const expect = chai.expect;
 const chaiAsPromised = require('chai-as-promised');
 
 chai.use(chaiAsPromised);
 
-const ApiMonitorService = require('../../../src/services/ApiMonitorService.js');
-const BucketInfo = require('../../../src/models/BucketInfo.js');
-const TestInfo = require('../../../src/models/TestInfo.js');
-const TestResult = require('../../../src/models/TestResult.js');
-const TestResultTimeFrame = require('../../../src/models/TestResultTimeFrame.js');
+const ApiMonitorService = require('../../../src/services/ApiMonitorService.js').ApiMonitorService;
+const BucketInfo = require('../../../src/models/BucketInfo.js').BucketInfo;
+const TestInfo = require('../../../src/models/TestInfo.js').TestInfo;
+const TestResult = require('../../../src/models/TestResult.js').TestResult;
+const TestResultTimeFrame = require('../../../src/models/TestResultTimeFrame.js').TestResultTimeFrame;
 
 const versionTestId = process.env.versionTestId;
 const token = process.env.token;
@@ -16,6 +18,7 @@ const bucketId = process.env.bucketId;
 const bucketName = process.env.bucketName;
 const triggerId = process.env.triggerId;
 const triggerUri = process.env.triggerUri;
+const testPrefix = process.env.testPrefix;
 
 describe('ApiServiceMonitor', function () {
   this.timeout(2000);
@@ -43,7 +46,21 @@ describe('ApiServiceMonitor', function () {
     it('it should return the data result', function () {
       return apiMonitor.getBucketTestsLists(token, bucketId)
         .then(testInfoCollection => {
-          //console.log(testInfoCollection);
+          expect(testInfoCollection.length > 0).to.equal(true);
+
+          expect(testInfoCollection[0] instanceof TestInfo).to.equal(true);
+          expect(testInfoCollection[0].id).to.not.be.null;
+          expect(testInfoCollection[0].name).to.not.be.null;
+          expect(testInfoCollection[0].success).to.not.be.null;
+          expect(testInfoCollection[0].results).to.not.be.null;
+          expect(testInfoCollection[0].uri).to.not.be.null;
+        })
+        .catch(error => expect(error).to.be.null);
+    });
+
+    it('it should return the data result filtered by test prefix', function () {
+      return apiMonitor.getBucketTestsListsWithPrefix(token, bucketId, testPrefix)
+        .then(testInfoCollection => {
           expect(testInfoCollection.length > 0).to.equal(true);
 
           expect(testInfoCollection[0] instanceof TestInfo).to.equal(true);
@@ -154,12 +171,45 @@ describe('ApiServiceMonitor', function () {
           expect(actualTestInfoCollection[0].uri).to.not.be.null;
         }).catch(error => expect(error).to.be.null);
     });
+
+    it('it should get filtered tests', function () {
+      return apiMonitor.getMostRecentResultsOfAllTestsWithPrefixInBucket(token, bucketId, testPrefix)
+        .then((actualTestInfoCollection) => {
+          expect(actualTestInfoCollection.length > 0).to.equal(true);
+          expect(actualTestInfoCollection[0] instanceof TestInfo).to.equal(true);
+          expect(actualTestInfoCollection[0].id).to.not.be.null;
+          expect(actualTestInfoCollection[0].name).to.not.be.null;
+          expect(actualTestInfoCollection[0].success).to.not.be.null;
+          expect(actualTestInfoCollection[0].results).to.not.be.null;
+          expect(actualTestInfoCollection[0].uri).to.not.be.null;
+        }).catch(error => expect(error).to.be.null);
+    });
   });
 
   describe('and getting all test results inside a bucket by name', function () {
     this.timeout(15000);
     it('when populated', function () {
       apiMonitor.getMostRecentResultsOfAllTestsInBucketByName(token, bucketName)
+        .then(actualTestResultCollection => {
+          expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
+          expect(actualTestResultCollection.bucketInfo.id).not.be.null;
+          expect(actualTestResultCollection.bucketInfo.uri).not.be.null;
+
+          expect(actualTestResultCollection.testData.length > 0).to.equal(true);
+
+          expect(actualTestResultCollection.testData instanceof Array).to.equal(true);
+          expect(actualTestResultCollection.testData[0] instanceof TestInfo).to.equal(true);
+          expect(actualTestResultCollection.testData[0].id).not.be.null;
+          expect(actualTestResultCollection.testData[0].name).not.be.null;
+          expect(actualTestResultCollection.testData[0].success).not.be.null;
+          expect(actualTestResultCollection.testData[0].results).not.be.null;
+          expect(actualTestResultCollection.testData[0].uri).not.be.null;
+        })
+        .catch(error => expect(error).to.be.null);
+    });
+
+    it('when populated and filtered by test prefix', function () {
+      apiMonitor.getMostRecentResultsOfAllTestsWithPrefixInBucketByName(token, bucketName, testPrefix)
         .then(actualTestResultCollection => {
           expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
           expect(actualTestResultCollection.bucketInfo.id).not.be.null;
@@ -200,6 +250,48 @@ describe('ApiServiceMonitor', function () {
         })
         .catch((error) => expect(error).to.be.null);
     });
+    it('when populated and test prefix', function () {
+      return apiMonitor.getTimeFrameOfTestsWithPrefixInBucketByName(token, bucketName, testPrefix)
+        .then(actualTestResultCollection => {
+          expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
+          expect(actualTestResultCollection.bucketInfo.id).not.be.null;
+          expect(actualTestResultCollection.bucketInfo.uri).not.be.null;
+
+          expect(actualTestResultCollection.testData.length > 0).to.equal(true);
+
+          expect(actualTestResultCollection.testData instanceof Array).to.equal(true);
+          expect(actualTestResultCollection.testData[0] instanceof TestResultTimeFrame).to.equal(true);
+          expect(actualTestResultCollection.testData[0].id).not.be.null;
+          expect(actualTestResultCollection.testData[0].name).not.be.null;
+          expect(actualTestResultCollection.testData[0].previousTestResult).not.be.null;
+          expect(actualTestResultCollection.testData[0].currentTestResult instanceof TestResult).to.equal(true);
+          expect(actualTestResultCollection.testData[0].uri).not.be.null;
+        })
+        .catch((error) => expect(error).to.be.null);
+    });
+  });
+
+  describe('and getting all test results with prefix inside a bucket by name', function () {
+    this.timeout(15000);
+    it('when populated', function () {
+      return apiMonitor.getTimeFrameOfTestsInBucketByName(token, bucketName)
+        .then(actualTestResultCollection => {
+          expect(actualTestResultCollection.bucketInfo.name).to.equal(bucketName);
+          expect(actualTestResultCollection.bucketInfo.id).not.be.null;
+          expect(actualTestResultCollection.bucketInfo.uri).not.be.null;
+
+          expect(actualTestResultCollection.testData.length > 0).to.equal(true);
+
+          expect(actualTestResultCollection.testData instanceof Array).to.equal(true);
+          expect(actualTestResultCollection.testData[0] instanceof TestResultTimeFrame).to.equal(true);
+          expect(actualTestResultCollection.testData[0].id).not.be.null;
+          expect(actualTestResultCollection.testData[0].name).not.be.null;
+          expect(actualTestResultCollection.testData[0].previousTestResult).not.be.null;
+          expect(actualTestResultCollection.testData[0].currentTestResult instanceof TestResult).to.equal(true);
+          expect(actualTestResultCollection.testData[0].uri).not.be.null;
+        })
+        .catch((error) => expect(error).to.be.null);
+    });
   });
 
   describe('and getting shared environments', function () {
@@ -207,7 +299,6 @@ describe('ApiServiceMonitor', function () {
       return apiMonitor.getSharedEnvironments(token, bucketId)
         .then(response => {
           expect(response.length).to.be.greaterThan(0);
-          console.log(response);
         })
         .catch(error => expect(error).to.be.null);
     });
@@ -218,7 +309,6 @@ describe('ApiServiceMonitor', function () {
       return apiMonitor.triggerById(token, triggerId, bucketId)
         .then(response => {
           expect(response.length).to.be.greaterThan(0);
-          console.log(response);
         })
         .catch(error => expect(error).to.be.null);
     });
@@ -230,7 +320,6 @@ describe('ApiServiceMonitor', function () {
       return apiMonitor.triggerByTestInformation(token, testInfo, bucketId)
         .then(response => {
           expect(response.length).to.be.greaterThan(0);
-          console.log(response);
         })
         .catch(error => expect(error).to.be.null);
     });
